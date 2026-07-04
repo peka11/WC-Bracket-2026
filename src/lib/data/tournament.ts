@@ -1,10 +1,10 @@
 import type { Team, BracketSlot, Match, BracketRound } from "@/lib/types";
 import { flagUrl } from "@/lib/utils";
 
-/** Snapshot: 4 July 2026 — R32 complete except COL–GHA; R16 starts today */
+/** Snapshot: 4 July 2026 — R32 complete; R16 underway (CAN–MAR, PAR–FRA today) */
 export const TOURNAMENT_ID = "wc-2026";
 export const TOURNAMENT_START = "2026-06-11T17:00:00Z";
-export const DATA_AS_OF = "2026-07-04T10:44:00Z";
+export const DATA_AS_OF = "2026-07-04T13:14:00Z";
 
 function t(
   id: string,
@@ -74,7 +74,7 @@ export function getActiveTeams(): Team[] {
 
 /** Round-of-32 fixture list (FIFA fixed bracket) */
 export const R32_FIXTURES: Omit<Match, "id">[] = [
-  { round: "r32", matchNumber: 1, homeTeamId: "can", awayTeamId: "rsa", homeScore: 1, awayScore: 0, winnerTeamId: "can", status: "finished", kickoffAt: "2026-06-28T19:00:00-07:00", venue: "SoFi Stadium, Los Angeles" },
+  { round: "r32", matchNumber: 1, homeTeamId: "can", awayTeamId: "rsa", homeScore: 1, awayScore: 0, winnerTeamId: "can", status: "finished", kickoffAt: "2026-06-28T12:00:00-07:00", venue: "SoFi Stadium, Inglewood", events: [{ type: "goal", minute: 92, teamCode: "CAN", player: "S. Eustáquio", detail: "90+2'" }] },
   { round: "r32", matchNumber: 2, homeTeamId: "bra", awayTeamId: "jpn", homeScore: 2, awayScore: 1, winnerTeamId: "bra", status: "finished", kickoffAt: "2026-06-29T17:00:00-05:00", venue: "NRG Stadium, Houston" },
   { round: "r32", matchNumber: 3, homeTeamId: "par", awayTeamId: "ger", homeScore: 1, awayScore: 1, winnerTeamId: "par", status: "finished", kickoffAt: "2026-06-29T20:00:00-04:00", venue: "Gillette Stadium, Foxborough", events: [{ type: "goal", minute: 90, teamCode: "PAR", detail: "Won 4-3 on penalties" }] },
   { round: "r32", matchNumber: 4, homeTeamId: "mar", awayTeamId: "ned", homeScore: 1, awayScore: 1, winnerTeamId: "mar", status: "finished", kickoffAt: "2026-06-30T20:00:00-06:00", venue: "Estadio BBVA, Guadalupe", events: [{ type: "goal", minute: 90, teamCode: "MAR", detail: "Won 3-2 on penalties" }] },
@@ -82,14 +82,14 @@ export const R32_FIXTURES: Omit<Match, "id">[] = [
   { round: "r32", matchNumber: 6, homeTeamId: "fra", awayTeamId: "swe", homeScore: 3, awayScore: 0, winnerTeamId: "fra", status: "finished", kickoffAt: "2026-06-30T20:00:00-04:00", venue: "MetLife Stadium, New Jersey" },
   { round: "r32", matchNumber: 7, homeTeamId: "mex", awayTeamId: "ecu", homeScore: 2, awayScore: 0, winnerTeamId: "mex", status: "finished", kickoffAt: "2026-07-01T20:00:00-06:00", venue: "Estadio Azteca, Mexico City" },
   { round: "r32", matchNumber: 8, homeTeamId: "eng", awayTeamId: "cod", homeScore: 2, awayScore: 1, winnerTeamId: "eng", status: "finished", kickoffAt: "2026-07-01T17:00:00-04:00", venue: "Mercedes-Benz Stadium, Atlanta" },
-  { round: "r32", matchNumber: 9, homeTeamId: "bel", awayTeamId: "sen", homeScore: 3, awayScore: 2, winnerTeamId: "bel", status: "finished", kickoffAt: "2026-07-01T20:00:00-07:00", venue: "Lumen Field, Seattle" },
+  { round: "r32", matchNumber: 9, homeTeamId: "bel", awayTeamId: "sen", homeScore: 3, awayScore: 2, winnerTeamId: "bel", status: "finished", kickoffAt: "2026-07-01T13:00:00-07:00", venue: "Lumen Field, Seattle", events: [{ type: "goal", minute: 25, teamCode: "SEN", player: "H. Diarra" }, { type: "goal", minute: 51, teamCode: "SEN", player: "I. Sarr" }, { type: "goal", minute: 86, teamCode: "BEL", player: "R. Lukaku" }, { type: "goal", minute: 89, teamCode: "BEL", player: "Y. Tielemans" }, { type: "goal", minute: 125, teamCode: "BEL", player: "Y. Tielemans", detail: "120+5' pen." }] },
   { round: "r32", matchNumber: 10, homeTeamId: "usa", awayTeamId: "bih", homeScore: 2, awayScore: 0, winnerTeamId: "usa", status: "finished", kickoffAt: "2026-07-02T17:00:00-07:00", venue: "Levi's Stadium, Santa Clara" },
   { round: "r32", matchNumber: 11, homeTeamId: "esp", awayTeamId: "aut", homeScore: 3, awayScore: 0, winnerTeamId: "esp", status: "finished", kickoffAt: "2026-07-02T20:00:00-07:00", venue: "SoFi Stadium, Inglewood" },
   { round: "r32", matchNumber: 12, homeTeamId: "por", awayTeamId: "cro", homeScore: 2, awayScore: 1, winnerTeamId: "por", status: "finished", kickoffAt: "2026-07-02T20:00:00-04:00", venue: "BMO Field, Toronto", events: [{ type: "goal", minute: 68, teamCode: "POR", player: "C. Ronaldo", detail: "Penalty" }, { type: "goal", minute: 90, teamCode: "POR", player: "G. Ramos", detail: "90+4'" }] },
   { round: "r32", matchNumber: 13, homeTeamId: "sui", awayTeamId: "alg", homeScore: 2, awayScore: 0, winnerTeamId: "sui", status: "finished", kickoffAt: "2026-07-02T20:00:00-07:00", venue: "BC Place, Vancouver" },
   { round: "r32", matchNumber: 14, homeTeamId: "aus", awayTeamId: "egy", homeScore: 1, awayScore: 1, winnerTeamId: "egy", status: "finished", kickoffAt: "2026-07-03T12:00:00-05:00", venue: "AT&T Stadium, Arlington", events: [{ type: "goal", minute: 90, teamCode: "EGY", detail: "Won 4-2 on penalties" }] },
-  { round: "r32", matchNumber: 15, homeTeamId: "arg", awayTeamId: "cpv", homeScore: 1, awayScore: 0, winnerTeamId: "arg", status: "finished", kickoffAt: "2026-07-03T18:00:00-04:00", venue: "Hard Rock Stadium, Miami", events: [{ type: "goal", minute: 29, teamCode: "ARG", player: "L. Messi" }] },
-  { round: "r32", matchNumber: 16, homeTeamId: "col", awayTeamId: "gha", homeScore: 2, awayScore: 0, winnerTeamId: "col", status: "finished", kickoffAt: "2026-07-04T01:30:00-05:00", venue: "Arrowhead Stadium, Kansas City" },
+  { round: "r32", matchNumber: 15, homeTeamId: "arg", awayTeamId: "cpv", homeScore: 3, awayScore: 2, winnerTeamId: "arg", status: "finished", kickoffAt: "2026-07-03T18:00:00-04:00", venue: "Hard Rock Stadium, Miami Gardens", events: [{ type: "goal", minute: 29, teamCode: "ARG", player: "L. Messi" }, { type: "goal", minute: 59, teamCode: "CPV", player: "L. Duarte" }, { type: "goal", minute: 92, teamCode: "ARG", player: "L. Martínez" }, { type: "goal", minute: 103, teamCode: "CPV", player: "S. Cabral" }, { type: "goal", minute: 111, teamCode: "ARG", player: "Diney", detail: "Own goal" }] },
+  { round: "r32", matchNumber: 16, homeTeamId: "col", awayTeamId: "gha", homeScore: 1, awayScore: 0, winnerTeamId: "col", status: "finished", kickoffAt: "2026-07-03T20:30:00-05:00", venue: "Arrowhead Stadium, Kansas City", events: [{ type: "goal", minute: 14, teamCode: "COL", player: "J. Arias" }] },
 ];
 
 /** Round-of-16 schedule (starts 4 July) */
@@ -104,17 +104,17 @@ export const R16_FIXTURES: Omit<Match, "id">[] = [
   { round: "r16", matchNumber: 8, homeTeamId: "sui", awayTeamId: "col", homeScore: null, awayScore: null, status: "not_started", kickoffAt: "2026-07-07T13:00:00-07:00", venue: "BC Place, Vancouver" },
 ];
 
-/** Quarterfinals — teams fill as R16 completes */
+/** Quarterfinals — teams fill as R16 completes (FIFA / ESPN schedule) */
 export const QF_FIXTURES: Omit<Match, "id">[] = [
-  { round: "qf", matchNumber: 1, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-10T16:00:00-04:00", venue: "MetLife Stadium, New Jersey" },
-  { round: "qf", matchNumber: 2, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-10T20:00:00-04:00", venue: "Lincoln Financial Field, Philadelphia" },
-  { round: "qf", matchNumber: 3, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-11T17:00:00-04:00", venue: "Hard Rock Stadium, Miami" },
-  { round: "qf", matchNumber: 4, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-11T20:00:00-07:00", venue: "SoFi Stadium, Inglewood" },
+  { round: "qf", matchNumber: 1, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-09T16:00:00-04:00", venue: "Gillette Stadium, Foxborough" },
+  { round: "qf", matchNumber: 2, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-10T12:00:00-07:00", venue: "SoFi Stadium, Inglewood" },
+  { round: "qf", matchNumber: 3, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-11T17:00:00-04:00", venue: "Hard Rock Stadium, Miami Gardens" },
+  { round: "qf", matchNumber: 4, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-11T20:00:00-05:00", venue: "Arrowhead Stadium, Kansas City" },
 ];
 
 export const SF_FIXTURES: Omit<Match, "id">[] = [
-  { round: "sf", matchNumber: 1, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-14T20:00:00-04:00", venue: "AT&T Stadium, Arlington" },
-  { round: "sf", matchNumber: 2, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-15T20:00:00-04:00", venue: "Mercedes-Benz Stadium, Atlanta" },
+  { round: "sf", matchNumber: 1, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-14T15:00:00-05:00", venue: "AT&T Stadium, Arlington" },
+  { round: "sf", matchNumber: 2, homeTeamId: "tbd", awayTeamId: "tbd", status: "not_started", kickoffAt: "2026-07-15T15:00:00-04:00", venue: "Mercedes-Benz Stadium, Atlanta" },
 ];
 
 export const FINAL_FIXTURES: Omit<Match, "id">[] = [
