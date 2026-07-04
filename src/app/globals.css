@@ -49,4 +49,24 @@ body {
   .score-input {
     @apply w-12 rounded-lg border border-black/10 bg-white px-2 py-1 text-center text-sm font-semibold tabular-nums text-gray-900 placeholder:text-gray-400 focus:border-wc-green focus:outline-none focus:ring-1 focus:ring-wc-green/40 disabled:opacity-50 dark:border-white/20 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500;
   }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-marquee {
+      animation: none;
+    }
+  }
+
+  @media print {
+    header, .fixed, nav { display: none !important; }
+    main { max-width: 100% !important; padding: 0 !important; }
+  }
 }

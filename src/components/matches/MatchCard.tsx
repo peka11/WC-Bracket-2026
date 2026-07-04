@@ -43,7 +43,9 @@ export function MatchCard({ match, home, away, onPickWinner, pickOverlay }: Matc
       )}
     >
       <div className="mb-3 flex items-center justify-between text-xs">
-        <span className="text-gray-500">Match {match.matchNumber}</span>
+        <Link href={`/matches/${match.id}`} className="text-gray-500 hover:text-wc-green hover:underline">
+          Match {match.matchNumber} · Details
+        </Link>
         <div className="flex items-center gap-2">
           {pickOverlay && pickOverlay.status !== "none" && (
             <PickBadge overlay={pickOverlay} predictedTeam={predictedTeam} />

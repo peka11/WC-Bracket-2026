@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, Radio } from "lucide-react";
 import { useMemo } from "react";
 import { BracketPanel } from "@/components/bracket/BracketPanel";
+import { BracketPosterButton } from "@/components/bracket/BracketPosterButton";
 import { StillAliveBanner } from "@/components/bracket/StillAliveBanner";
 import { SyncIndicator } from "@/components/bracket/ShareBracket";
 import { MatchCard } from "@/components/matches/MatchCard";
@@ -111,8 +112,16 @@ export default function HomePage() {
               Tap a sector to focus · Gold arc = R16 matchup · Click a team for details
             </p>
           </div>
+          <div className="flex flex-wrap gap-2">
+            <BracketPosterButton />
+            <Link href="/embed/bracket" className="btn-ghost text-sm" target="_blank">
+              Embed widget
+            </Link>
+          </div>
         </div>
-        <BracketPanel />
+        <div className="bracket-export-svg">
+          <BracketPanel />
+        </div>
       </section>
 
       <div className="grid gap-8 lg:grid-cols-2">

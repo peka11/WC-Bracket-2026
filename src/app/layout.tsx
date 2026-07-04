@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Oswald } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
+import { AppChrome } from "@/components/layout/AppChrome";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { TimezoneProvider } from "@/components/timezone/TimezoneProvider";
+import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
 import { BracketProvider } from "@/lib/bracket/BracketProvider";
 import { PredictionsProvider } from "@/lib/predictions/PredictionsProvider";
@@ -33,17 +34,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${oswald.variable} font-sans antialiased`}>
         <ThemeProvider>
-          <TimezoneProvider>
-            <AuthProvider>
-              <BracketProvider>
-                <PredictionsProvider>
-                  <ServiceWorkerRegister />
-                  <Navbar />
-                  <main className="mx-auto max-w-7xl px-4 pb-20 pt-6">{children}</main>
-                </PredictionsProvider>
-              </BracketProvider>
-            </AuthProvider>
-          </TimezoneProvider>
+          <I18nProvider>
+            <TimezoneProvider>
+              <AuthProvider>
+                <BracketProvider>
+                  <PredictionsProvider>
+                    <ServiceWorkerRegister />
+                    <AppChrome>{children}</AppChrome>
+                  </PredictionsProvider>
+                </BracketProvider>
+              </AuthProvider>
+            </TimezoneProvider>
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

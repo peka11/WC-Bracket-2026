@@ -130,6 +130,15 @@ function TeamNode({
       whileHover={interactive && !isEliminated ? { scale: 1.1 } : undefined}
       style={{ cursor: interactive && !isEliminated ? "pointer" : "default" }}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (interactive && !isEliminated && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+      tabIndex={interactive && !isEliminated ? 0 : undefined}
+      role={interactive ? "button" : undefined}
+      aria-label={`${team.name}${isWinner ? ", winner" : ""}${isLive ? ", live" : ""}`}
       filter={isEliminated ? undefined : "url(#teamGlow)"}
     >
       <defs>
@@ -321,8 +330,9 @@ export function CircularBracket({
       <div className="pointer-events-none absolute inset-4 rounded-full bg-[radial-gradient(circle,rgba(197,160,40,0.12)_0%,transparent_65%)] blur-2xl" />
       <svg
         viewBox="-48 -48 896 896"
-        className="relative aspect-square h-auto w-full"
-        aria-label="World Cup bracket"
+        className="relative aspect-square h-auto w-full bracket-export-svg"
+        aria-label="World Cup knockout bracket — use Tab to navigate teams"
+        role="img"
       >
         <BracketDefs />
 

@@ -5,12 +5,14 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ArrowLeft, Trophy } from "lucide-react";
 import { getTeamProfile } from "@/lib/data/team-profiles";
+import { getTeamEncyclopedia, headToHeadSummary } from "@/lib/data/team-encyclopedia";
 import { useBracket } from "@/lib/bracket/BracketProvider";
 import { ELIMINATED_TEAM_IDS } from "@/lib/data/tournament";
 import { favoriteTeamId, winProbabilityFromRankings } from "@/lib/odds/probability";
 
 export default function TeamPage({ params }: { params: { id: string } }) {
   const profile = getTeamProfile(params.id);
+  const encyclopedia = getTeamEncyclopedia(params.id);
   const { matches, teamMap } = useBracket();
 
   if (!profile) {
@@ -110,9 +112,78 @@ export default function TeamPage({ params }: { params: { id: string } }) {
             <Trophy className="h-5 w-5 text-wc-gold" />
             Latest result
           </h2>
-          <p className="text-sm">
+          <Link href={`/matches/${lastResult.id}`} className="text-sm hover:text-wc-green">
             {teamMap[lastResult.homeTeamId]?.code} {lastResult.homeScore}–{lastResult.awayScore}{" "}
             {teamMap[lastResult.awayTeamId]?.code}
+          </Link>
+        </div>
+      )}
+
+      <div className="glass-card p-5">
+        <h2 className="font-display mb-3 font-semibold">How they qualified</h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400">{encyclopedia.qualification}</p>
+        {encyclopedia.groupStageRecap && (
+          <p className="mt-2 text-sm text-gray-500">{encyclopedia.groupStageRecap}</p>
+        )}
+      </div>
+
+      <div className="glass-card p-5">
+        <h2 className="font-display mb-3 font-semibold">Squad</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-xs text-gray-400">
+                <th className="pb-2">Player</th>
+                <th className="pb-2">Pos</th>
+                <th className="pb-2">Club</th>
+                <th className="pb-2">Caps</th>
+              </tr>
+            </thead>
+            <tbody>
+              {encyclopedia.squad.map((p) => (
+                <tr key={p.name} className="border-t border-black/5 dark:border-white/10">
+                  <td className="py-2 font-medium">{p.name}</td>
+                  <td className="py-2">{p.position}</td>
+                  <td className="py-2 text-gray-500">{p.club}</td>
+                  <td className="py-2 tabular-nums">{p.caps ?? "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="glass-card p-5">
+        <h2 className="font-display mb-3 font-semibold">World Cup history</h2>
+        <ul className="space-y-2 text-sm">
+          {encyclopedia.wcHistory.map((h) => (
+            <li key={h.year} className="flex justify-between">
+              <span>{h.year}</span>
+              <span className="font-medium">{h.finish}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {encyclopedia.rivalries.length > 0 && (
+        <div className="glass-card p-5">
+          <h2 className="font-display mb-3 font-semibold">Key rivalries</h2>
+          <ul className="list-inside list-disc text-sm text-gray-600 dark:text-gray-400">
+            {encyclopedia.rivalries.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {nextMatch && (
+        <div className="glass-card p-5">
+          <h2 className="font-display mb-2 font-semibold">Head-to-head · next opponent</h2>
+          <p className="text-sm text-gray-500">
+            {headToHeadSummary(
+              profile.code,
+              teamMap[nextMatch.homeTeamId === profile.id ? nextMatch.awayTeamId : nextMatch.homeTeamId]?.code ?? "?"
+            )}
           </p>
         </div>
       )}

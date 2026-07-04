@@ -30,6 +30,9 @@ export function useAdvancementAnimations(matches: Match[], slots: BracketSlot[],
   const animatingIds = new Set(animations.filter((a) => a.progress < 1).map((a) => a.teamId));
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
     if (!seededRef.current) {
       for (const match of matches) {
         if (match.status === "finished" && match.winnerTeamId) {

@@ -28,6 +28,19 @@ export interface MatchEvent {
   detail?: string;
 }
 
+export interface MatchStats {
+  homeXG?: number;
+  awayXG?: number;
+  homeShots?: number;
+  awayShots?: number;
+  homeShotsOnTarget?: number;
+  awayShotsOnTarget?: number;
+  homeCorners?: number;
+  awayCorners?: number;
+  homePossession?: number;
+  awayPossession?: number;
+}
+
 export interface Match {
   id: string;
   round: BracketRound;
@@ -40,9 +53,14 @@ export interface Match {
   status: MatchStatus;
   kickoffAt: string;
   venue?: string;
+  /** @deprecated prefer stats.homePossession */
   homePossession?: number;
+  /** @deprecated prefer stats.awayPossession */
   awayPossession?: number;
   events?: MatchEvent[];
+  stats?: MatchStats;
+  referee?: string;
+  attendance?: number;
 }
 
 export interface BracketSlot {

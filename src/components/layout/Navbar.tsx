@@ -21,26 +21,41 @@ import {
   Grid3x3,
   Zap,
   LayoutDashboard,
+  Calendar,
+  MapPin,
+  BookOpen,
+  GitBranch,
+  Monitor,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/theme/ThemeProvider";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { KickoffReminders } from "@/components/pwa/KickoffReminders";
 import { TimezonePicker } from "@/components/timezone/TimezonePicker";
+import { LocalePicker } from "@/components/i18n/LocalePicker";
+import { useI18n } from "@/lib/i18n/I18nProvider";
 
-const NAV = [
-  { href: "/", label: "Bracket", icon: LayoutGrid },
-  { href: "/live", label: "Live", icon: Radio },
-  { href: "/predictions", label: "Predictions", icon: Target },
-  { href: "/groups", label: "Groups", icon: Grid3x3 },
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/modes", label: "Modes", icon: Zap },
-  { href: "/compare", label: "Compare", icon: GitCompare },
-  { href: "/challenge", label: "Challenge", icon: Swords },
-  { href: "/leaderboard", label: "Leaderboard", icon: BarChart3 },
-  { href: "/leagues", label: "Leagues", icon: Users },
-  { href: "/admin", label: "Admin", icon: Shield },
-];
+function useNav() {
+  const { t } = useI18n();
+  return [
+    { href: "/", label: t.nav.bracket, icon: LayoutGrid },
+    { href: "/live", label: t.nav.live, icon: Radio },
+    { href: "/schedule", label: t.nav.schedule, icon: Calendar },
+    { href: "/predictions", label: t.nav.predictions, icon: Target },
+    { href: "/groups", label: t.nav.groups, icon: Grid3x3 },
+    { href: "/tournament", label: t.nav.tournament, icon: BookOpen },
+    { href: "/venues", label: t.nav.venues, icon: MapPin },
+    { href: "/path", label: t.nav.path, icon: GitBranch },
+    { href: "/dashboard", label: t.nav.dashboard, icon: LayoutDashboard },
+    { href: "/modes", label: t.nav.modes, icon: Zap },
+    { href: "/compare", label: t.nav.compare, icon: GitCompare },
+    { href: "/challenge", label: t.nav.challenge, icon: Swords },
+    { href: "/leaderboard", label: t.nav.leaderboard, icon: BarChart3 },
+    { href: "/leagues", label: t.nav.leagues, icon: Users },
+    { href: "/bracket/present", label: t.nav.present, icon: Monitor },
+    { href: "/admin", label: t.nav.admin, icon: Shield },
+  ];
+}
 
 function NavLink({
   href,
@@ -77,6 +92,7 @@ function NavLink({
 
 export function Navbar() {
   const path = usePathname();
+  const NAV = useNav();
   const { theme, toggle } = useTheme();
   const { user, loading, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -115,6 +131,9 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-1 sm:gap-2">
+          <div className="hidden md:block">
+            <LocalePicker />
+          </div>
           <div className="hidden md:block">
             <TimezonePicker />
           </div>
@@ -169,6 +188,7 @@ export function Navbar() {
             </nav>
 
             <div className="space-y-3 border-t border-black/5 p-4 dark:border-white/10">
+              <LocalePicker className="block w-full" />
               <TimezonePicker className="block w-full" />
               <KickoffReminders />
               {!loading && user ? (

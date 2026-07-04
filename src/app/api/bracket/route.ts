@@ -9,6 +9,7 @@ import {
 import { ensureInnerSlots } from "@/lib/bracket/advance";
 import { mergeBracketState } from "@/lib/bracket/merge";
 import { getMemorySnapshot } from "@/lib/bracket/snapshot-store";
+import { enrichAllMatches } from "@/lib/match/enrich";
 import { createServiceClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -49,7 +50,7 @@ export async function GET() {
   return NextResponse.json({
     tournamentId: TOURNAMENT_ID,
     dataAsOf: DATA_AS_OF,
-    matches,
+    matches: enrichAllMatches(matches),
     slots,
     teams: TEAMS_2026,
     syncedAt: snapshot?.updatedAt ?? new Date().toISOString(),
