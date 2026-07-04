@@ -4,6 +4,10 @@ import { motion } from "framer-motion";
 import type { Team, BracketSlot, Match } from "@/lib/types";
 import { polarToCartesian } from "@/lib/utils";
 import { BRACKET_SECTORS, radiusForRound } from "@/lib/data/tournament";
+import {
+  useAdvancementAnimations,
+  interpolatePosition,
+} from "@/lib/bracket/useAdvancementAnimations";
 
 const CX = 400;
 const CY = 400;
@@ -285,6 +289,7 @@ export function CircularBracket({
   onTeamClick,
   interactive = false,
 }: CircularBracketProps) {
+  const { animations, animatingIds } = useAdvancementAnimations(matches, slots, teamMap);
   const r32Slots = slots.filter((s) => s.round === "r32" && s.teamId);
   const r16TeamIds = new Set(
     slots.filter((s) => s.round === "r16" && s.teamId).map((s) => s.teamId!)
@@ -458,6 +463,7 @@ export function CircularBracket({
         {slots
           .filter((s) => s.round !== "r32" && s.round !== "champion" && s.teamId)
           .map((slot) => {
+            if (slot.teamId && animatingIds.has(slot.teamId)) return null;
             const sectorIdx = Math.floor(slot.slotIndex / 2);
             if (focusedSector != null && slot.round === "r16" && focusedSector !== sectorIdx) return null;
             const team = teamMap[slot.teamId!];
@@ -476,6 +482,52 @@ export function CircularBracket({
               />
             );
           })}
+
+        {/* Animated advancement along bracket arcs */}
+        {animations.map((anim) => {
+          const pos = interpolatePosition(anim.from, anim.to, anim.progress);
+          const size = 44;
+          const clipId = `fly-${anim.teamId}`;
+          return (
+            <g key={`fly-${anim.teamId}`} filter="url(#teamGlow)">
+              <defs>
+                <clipPath id={clipId}>
+                  <circle cx={pos.x} cy={pos.y} r={size / 2 - 2} />
+                </clipPath>
+              </defs>
+              <motion.circle
+                cx={pos.x}
+                cy={pos.y}
+                r={size / 2 + 4}
+                fill="none"
+                stroke="#E8C547"
+                strokeWidth={2}
+                animate={{ opacity: [0.6, 1, 0.6] }}
+                transition={{ repeat: Infinity, duration: 0.8 }}
+              />
+              <circle cx={pos.x} cy={pos.y} r={size / 2} fill="#0a1f14" stroke="#E8C547" strokeWidth={2} />
+              <image
+                href={anim.flagUrl}
+                x={pos.x - size / 2 + 4}
+                y={pos.y - size / 2 + 4}
+                width={size - 8}
+                height={size - 8}
+                clipPath={`url(#${clipId})`}
+                preserveAspectRatio="xMidYMid slice"
+              />
+              <text
+                x={pos.x}
+                y={pos.y + size / 2 + 12}
+                textAnchor="middle"
+                fill="#F5E6A3"
+                fontSize={9}
+                fontWeight={700}
+              >
+                {anim.teamCode}
+              </text>
+            </g>
+          );
+        })}
 
         <WorldCupCenter championId={championId} teamMap={teamMap} />
       </svg>

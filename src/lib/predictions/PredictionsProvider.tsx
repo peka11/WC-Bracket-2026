@@ -14,8 +14,9 @@ import {
   loadPredictions,
   savePredictions,
   decodePredictionsFromShare,
-  encodePredictionsForShare,
 } from "@/lib/predictions/store";
+import { encodePredictionsForShare } from "@/lib/predictions/store";
+import { getSharePageUrl, getChallengeUrl } from "@/lib/predictions/head-to-head";
 import { useAuth } from "@/lib/auth/AuthProvider";
 
 interface PredictionsContextValue {
@@ -28,6 +29,7 @@ interface PredictionsContextValue {
   save: () => Promise<void>;
   loadFromShare: (encoded: string) => boolean;
   getShareUrl: () => string;
+  getChallengeLink: () => string;
   saved: boolean;
   cloudSynced: boolean;
 }
@@ -143,11 +145,13 @@ export function PredictionsProvider({ children }: { children: ReactNode }) {
   }, [persist]);
 
   const getShareUrl = useCallback(() => {
-    if (typeof window === "undefined") return "";
     const encoded = encodePredictionsForShare(picks);
-    const url = new URL(window.location.origin + "/predictions");
-    url.searchParams.set("bracket", encoded);
-    return url.toString();
+    return getSharePageUrl(encoded);
+  }, [picks]);
+
+  const getChallengeLink = useCallback(() => {
+    const encoded = encodePredictionsForShare(picks);
+    return getChallengeUrl(encoded);
   }, [picks]);
 
   return (
@@ -162,6 +166,7 @@ export function PredictionsProvider({ children }: { children: ReactNode }) {
         save,
         loadFromShare,
         getShareUrl,
+        getChallengeLink,
         saved,
         cloudSynced,
       }}

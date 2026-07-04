@@ -17,6 +17,7 @@ import {
   GitCompare,
   Menu,
   X,
+  Swords,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/theme/ThemeProvider";
@@ -28,6 +29,7 @@ const NAV = [
   { href: "/live", label: "Live", icon: Radio },
   { href: "/predictions", label: "Predictions", icon: Target },
   { href: "/compare", label: "Compare", icon: GitCompare },
+  { href: "/challenge", label: "Challenge", icon: Swords },
   { href: "/leaderboard", label: "Leaderboard", icon: BarChart3 },
   { href: "/leagues", label: "Leagues", icon: Users },
   { href: "/admin", label: "Admin", icon: Shield },

@@ -30,12 +30,10 @@ export function encodePredictionsForShare(picks: UserPredictions): string {
 
 export function decodePredictionsFromShare(encoded: string): UserPredictions | null {
   try {
-    let json: string;
-    if (typeof window !== "undefined") {
-      json = decodeURIComponent(escape(atob(encoded)));
-    } else {
-      json = Buffer.from(encoded, "base64url").toString("utf-8");
-    }
+    const json =
+      typeof window !== "undefined"
+        ? decodeURIComponent(escape(atob(encoded)))
+        : Buffer.from(encoded, "base64").toString("utf-8");
     return { ...emptyPredictions(), ...JSON.parse(json) };
   } catch {
     return null;
