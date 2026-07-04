@@ -1,0 +1,16 @@
+{
+  "name": "World Cup Bracket Challenge",
+  "short_name": "WC Bracket",
+  "description": "Interactive World Cup bracket with live scores and predictions",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#00A651",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
