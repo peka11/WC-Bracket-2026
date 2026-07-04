@@ -14,6 +14,7 @@ import { usePredictions } from "@/lib/predictions/PredictionsProvider";
 import { DATA_AS_OF } from "@/lib/data/tournament";
 import { getTournamentStatus } from "@/lib/tournament-status";
 import { getMatchPickOverlay } from "@/lib/predictions/match-pick-status";
+import { AddAllToCalendarButton } from "@/components/calendar/AddToCalendarButton";
 
 function TournamentStatus() {
   const { matches, activeTeams } = useBracket();
@@ -116,7 +117,18 @@ export default function HomePage() {
 
       <div className="grid gap-8 lg:grid-cols-2">
         <section>
-          <h2 className="font-display mb-4 text-lg font-semibold">Upcoming</h2>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-display text-lg font-semibold">Upcoming</h2>
+            <AddAllToCalendarButton
+              events={upcoming.map((m) => ({
+                match: m,
+                homeName: teamMap[m.homeTeamId]?.name ?? "TBD",
+                awayName: teamMap[m.awayTeamId]?.name ?? "TBD",
+              }))}
+              className="text-xs"
+              label="Add all to calendar"
+            />
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {upcoming.map((m) => (
               <MatchCard key={m.id} match={m} home={teamMap[m.homeTeamId]} away={teamMap[m.awayTeamId]} />

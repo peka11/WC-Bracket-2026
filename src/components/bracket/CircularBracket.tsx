@@ -23,6 +23,8 @@ interface CircularBracketProps {
   onSectorFocus?: (sector: number | null) => void;
   onTeamClick?: (teamId: string, matchId?: string) => void;
   interactive?: boolean;
+  /** Brief pulse on the team just picked in interactive mode */
+  flashPick?: { matchId: string; teamId: string } | null;
 }
 
 function BracketDefs() {
@@ -92,6 +94,7 @@ function TeamNode({
   isInner,
   onClick,
   interactive,
+  isJustPicked,
   size = 52,
 }: {
   team: Team;
@@ -103,6 +106,7 @@ function TeamNode({
   isInner?: boolean;
   onClick?: () => void;
   interactive?: boolean;
+  isJustPicked?: boolean;
   size?: number;
 }) {
   const clipId = `clip-${team.id}-${Math.round(x)}-${Math.round(y)}`;
@@ -114,8 +118,15 @@ function TeamNode({
   return (
     <motion.g
       initial={{ opacity: isEliminated ? 0.4 : 1, scale: 0.95 }}
-      animate={{ opacity: isEliminated ? 0.4 : 1, scale: 1 }}
-      transition={{ type: "spring", stiffness: 260, damping: 22 }}
+      animate={{
+        opacity: isEliminated ? 0.4 : 1,
+        scale: isJustPicked ? [1, 1.18, 1] : 1,
+      }}
+      transition={
+        isJustPicked
+          ? { duration: 0.55, ease: "easeOut" }
+          : { type: "spring", stiffness: 260, damping: 22 }
+      }
       whileHover={interactive && !isEliminated ? { scale: 1.1 } : undefined}
       style={{ cursor: interactive && !isEliminated ? "pointer" : "default" }}
       onClick={onClick}
@@ -288,6 +299,7 @@ export function CircularBracket({
   onSectorFocus,
   onTeamClick,
   interactive = false,
+  flashPick = null,
 }: CircularBracketProps) {
   const { animations, animatingIds } = useAdvancementAnimations(matches, slots, teamMap);
   const r32Slots = slots.filter((s) => s.round === "r32" && s.teamId);
@@ -453,6 +465,7 @@ export function CircularBracket({
               isWinner={match?.winnerTeamId === team.id}
               isLive={liveTeamIds.has(team.id)}
               isEliminated={false}
+              isJustPicked={flashPick?.teamId === team.id && flashPick.matchId === match?.id}
               interactive={interactive}
               onClick={() => onTeamClick?.(team.id, match?.id)}
             />
@@ -468,6 +481,12 @@ export function CircularBracket({
             if (focusedSector != null && slot.round === "r16" && focusedSector !== sectorIdx) return null;
             const team = teamMap[slot.teamId!];
             const { x, y } = polarToCartesian(CX, CY, radiusForRound(slot.round), slot.angleDegrees);
+            const slotMatch = matches.find(
+              (m) =>
+                m.round === slot.round &&
+                (m.homeTeamId === team.id || m.awayTeamId === team.id) &&
+                m.status !== "finished"
+            );
             return (
               <TeamNode
                 key={slot.id}
@@ -477,8 +496,9 @@ export function CircularBracket({
                 size={slot.round === "final" ? 46 : 42}
                 isInner
                 isWinner={championId === team.id}
+                isJustPicked={flashPick?.teamId === team.id && flashPick.matchId === slotMatch?.id}
                 interactive={interactive}
-                onClick={() => onTeamClick?.(team.id)}
+                onClick={() => onTeamClick?.(team.id, slotMatch?.id)}
               />
             );
           })}

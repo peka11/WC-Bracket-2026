@@ -45,4 +45,8 @@ body {
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-xl border border-black/10 px-4 py-2 text-sm font-medium transition hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5;
   }
+
+  .score-input {
+    @apply w-12 rounded-lg border border-black/10 bg-white px-2 py-1 text-center text-sm font-semibold tabular-nums text-gray-900 placeholder:text-gray-400 focus:border-wc-green focus:outline-none focus:ring-1 focus:ring-wc-green/40 disabled:opacity-50 dark:border-white/20 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500;
+  }
 }

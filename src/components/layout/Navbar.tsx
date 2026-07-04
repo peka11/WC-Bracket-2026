@@ -18,16 +18,23 @@ import {
   Menu,
   X,
   Swords,
+  Grid3x3,
+  Zap,
+  LayoutDashboard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/theme/ThemeProvider";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { KickoffReminders } from "@/components/pwa/KickoffReminders";
+import { TimezonePicker } from "@/components/timezone/TimezonePicker";
 
 const NAV = [
   { href: "/", label: "Bracket", icon: LayoutGrid },
   { href: "/live", label: "Live", icon: Radio },
   { href: "/predictions", label: "Predictions", icon: Target },
+  { href: "/groups", label: "Groups", icon: Grid3x3 },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/modes", label: "Modes", icon: Zap },
   { href: "/compare", label: "Compare", icon: GitCompare },
   { href: "/challenge", label: "Challenge", icon: Swords },
   { href: "/leaderboard", label: "Leaderboard", icon: BarChart3 },
@@ -108,6 +115,9 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-1 sm:gap-2">
+          <div className="hidden md:block">
+            <TimezonePicker />
+          </div>
           <div className="hidden sm:block">
             <KickoffReminders />
           </div>
@@ -159,6 +169,7 @@ export function Navbar() {
             </nav>
 
             <div className="space-y-3 border-t border-black/5 p-4 dark:border-white/10">
+              <TimezonePicker className="block w-full" />
               <KickoffReminders />
               {!loading && user ? (
                 <button

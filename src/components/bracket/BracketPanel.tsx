@@ -3,17 +3,19 @@
 import { useBracket } from "@/lib/bracket/BracketProvider";
 import { CircularBracket } from "@/components/bracket/CircularBracket";
 import { BracketListView } from "@/components/bracket/BracketListView";
-import { MatchDrawer } from "@/components/matches/MatchDrawer";
+import { BracketZoomContainer } from "@/components/bracket/BracketZoomContainer";
 import { BRACKET_SECTORS } from "@/lib/data/tournament";
 import { MatchCard } from "@/components/matches/MatchCard";
+import { MatchDrawer } from "@/components/matches/MatchDrawer";
 
 interface BracketPanelProps {
   interactive?: boolean;
   onPickWinner?: (matchId: string, winnerId: string) => void;
   canPickMatch?: (matchId: string) => boolean;
+  flashPick?: { matchId: string; teamId: string } | null;
 }
 
-export function BracketPanel({ interactive = false, onPickWinner, canPickMatch }: BracketPanelProps) {
+export function BracketPanel({ interactive = false, onPickWinner, canPickMatch, flashPick }: BracketPanelProps) {
   const {
     teams,
     teamMap,
@@ -32,7 +34,7 @@ export function BracketPanel({ interactive = false, onPickWinner, canPickMatch }
 
   return (
     <>
-      <div className="mx-auto w-full max-w-[860px]">
+      <BracketZoomContainer>
         <CircularBracket
           teams={teams}
           teamMap={teamMap}
@@ -49,8 +51,9 @@ export function BracketPanel({ interactive = false, onPickWinner, canPickMatch }
               openTeam(teamId, matchId);
             }
           }}
+          flashPick={flashPick}
         />
-      </div>
+      </BracketZoomContainer>
 
       <BracketListView
         matches={matches}

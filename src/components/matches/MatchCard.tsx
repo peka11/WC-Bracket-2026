@@ -1,16 +1,16 @@
 "use client";
 
-import { formatInTimeZone } from "date-fns-tz";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Check, Target, X } from "lucide-react";
+import { Check, MapPin, Target, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Match, Team } from "@/lib/types";
 import { MATCH_STATUS_LABELS } from "@/lib/types";
 import type { MatchPickOverlay } from "@/lib/predictions/match-pick-status";
-
-/** Fixed TZ so SSR and client render the same kickoff string */
-const DISPLAY_TZ = "America/New_York";
+import { AddToCalendarButton } from "@/components/calendar/AddToCalendarButton";
+import { useTimezone } from "@/components/timezone/TimezoneProvider";
+import { getStadiumMeta } from "@/lib/data/stadiums";
 
 interface MatchCardProps {
   match: Match;
@@ -21,8 +21,10 @@ interface MatchCardProps {
 }
 
 export function MatchCard({ match, home, away, onPickWinner, pickOverlay }: MatchCardProps) {
+  const { formatKickoff, timezoneLabel } = useTimezone();
   const isLive = match.status === "live";
-  const kickoff = formatInTimeZone(new Date(match.kickoffAt), DISPLAY_TZ, "MMM d · h:mm a");
+  const kickoff = formatKickoff(match.kickoffAt);
+  const stadium = getStadiumMeta(match.venue);
   const predictedTeam =
     pickOverlay?.predictedWinnerId === home.id
       ? home
@@ -82,9 +84,14 @@ export function MatchCard({ match, home, away, onPickWinner, pickOverlay }: Matc
                 <Image src={team.flagUrl} alt="" fill className="object-cover" unoptimized />
               </div>
               <span className="flex-1 text-left text-sm font-medium">
-                {team.name}
+                <Link href={`/teams/${team.id}`} className="hover:text-wc-green hover:underline" onClick={(e) => e.stopPropagation()}>
+                  <span className="block">{team.name}</span>
+                </Link>
+                {team.fifaRanking != null && (
+                  <span className="text-[10px] font-normal text-gray-400">FIFA #{team.fifaRanking}</span>
+                )}
                 {isYourPick && (
-                  <span className="ml-2 text-[10px] font-normal text-wc-green">Your pick</span>
+                  <span className="ml-0 block text-[10px] font-normal text-wc-green sm:ml-2 sm:inline">Your pick</span>
                 )}
               </span>
               <span className="tabular-nums text-lg font-bold">{score ?? "-"}</span>
@@ -93,10 +100,22 @@ export function MatchCard({ match, home, away, onPickWinner, pickOverlay }: Matc
         })}
       </div>
 
-      <div className="mt-3 flex items-center justify-between border-t border-black/5 pt-3 text-xs text-gray-500 dark:border-white/10">
-        <span>{kickoff}</span>
+      <div className="mt-3 space-y-1 border-t border-black/5 pt-3 text-xs text-gray-500 dark:border-white/10">
+        <div className="flex items-center justify-between gap-2">
+          <span>{kickoff} {timezoneLabel}</span>
+          <AddToCalendarButton match={match} homeName={home.name} awayName={away.name} compact />
+        </div>
+        {stadium && (
+          <p className="flex items-center gap-1 text-[10px] text-gray-400">
+            <MapPin className="h-3 w-3 shrink-0" />
+            {stadium.city}
+            {match.venue && ` · ${match.venue.split(",")[0]}`}
+            {" · "}
+            {stadium.capacity.toLocaleString()} cap.
+          </p>
+        )}
         {match.homePossession != null && (
-          <span>Possession {match.homePossession}% – {match.awayPossession}%</span>
+          <p>Possession {match.homePossession}% – {match.awayPossession}%</p>
         )}
       </div>
 

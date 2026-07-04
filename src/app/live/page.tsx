@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { Radio, Clock, MapPin, Target } from "lucide-react";
+import { AddToCalendarButton, AddAllToCalendarButton } from "@/components/calendar/AddToCalendarButton";
 import { useBracket } from "@/lib/bracket/BracketProvider";
 import { usePredictions } from "@/lib/predictions/PredictionsProvider";
 import { MatchCard } from "@/components/matches/MatchCard";
@@ -9,14 +10,13 @@ import { StillAliveBanner } from "@/components/bracket/StillAliveBanner";
 import { MATCH_STATUS_LABELS, ROUND_LABELS } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { TBD_TEAM } from "@/lib/data/tournament";
-import { formatInTimeZone } from "date-fns-tz";
+import { useTimezone } from "@/components/timezone/TimezoneProvider";
 import { getMatchPickOverlay } from "@/lib/predictions/match-pick-status";
-
-const TZ = "America/New_York";
 
 export default function LivePage() {
   const { matches, teamMap, refresh, isSyncing, lastUpdate } = useBracket();
   const { picks } = usePredictions();
+  const { formatKickoff, timezoneLabel } = useTimezone();
 
   const overlays = useMemo(() => {
     const map = new Map<string, ReturnType<typeof getMatchPickOverlay>>();
@@ -52,6 +52,16 @@ export default function LivePage() {
   const nextKickoff = upcoming[0];
   const pickedUpcoming = upcoming.filter((m) => overlays.get(m.id)?.status !== "none").length;
 
+  const calendarEvents = useMemo(
+    () =>
+      upcoming.map((m) => ({
+        match: m,
+        homeName: teamMap[m.homeTeamId]?.name ?? "TBD",
+        awayName: teamMap[m.awayTeamId]?.name ?? "TBD",
+      })),
+    [upcoming, teamMap]
+  );
+
   return (
     <div className="mx-auto max-w-4xl space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -64,9 +74,12 @@ export default function LivePage() {
             Live scores with your picks and points overlaid
           </p>
         </div>
-        <button type="button" onClick={() => refresh()} disabled={isSyncing} className="btn-ghost text-sm">
-          {isSyncing ? "Refreshing…" : "Refresh"}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <AddAllToCalendarButton events={calendarEvents} />
+          <button type="button" onClick={() => refresh()} disabled={isSyncing} className="btn-ghost text-sm">
+            {isSyncing ? "Refreshing…" : "Refresh"}
+          </button>
+        </div>
       </div>
 
       <StillAliveBanner />
@@ -87,7 +100,7 @@ export default function LivePage() {
               {teamMap[nextKickoff.homeTeamId]?.code} vs {teamMap[nextKickoff.awayTeamId]?.code}
             </p>
             <p className="text-sm text-gray-500">
-              {formatInTimeZone(new Date(nextKickoff.kickoffAt), TZ, "EEE, MMM d · h:mm a")} ET
+              {formatKickoff(nextKickoff.kickoffAt, "EEE, MMM d · h:mm a")} {timezoneLabel}
               {nextKickoff.venue && (
                 <span className="ml-2 inline-flex items-center gap-1">
                   <MapPin className="h-3 w-3" /> {nextKickoff.venue}
@@ -100,6 +113,11 @@ export default function LivePage() {
               </p>
             )}
           </div>
+          <AddToCalendarButton
+            match={nextKickoff}
+            homeName={teamMap[nextKickoff.homeTeamId]?.name ?? "TBD"}
+            awayName={teamMap[nextKickoff.awayTeamId]?.name ?? "TBD"}
+          />
         </div>
       )}
 
@@ -144,8 +162,15 @@ export default function LivePage() {
                   )}
                 </div>
                 <div className="text-right text-sm text-gray-500">
-                  <p>{formatInTimeZone(new Date(m.kickoffAt), TZ, "MMM d, h:mm a")}</p>
+                  <p>{formatKickoff(m.kickoffAt, "MMM d, h:mm a")}</p>
                   <p className="text-xs">{MATCH_STATUS_LABELS[m.status]}</p>
+                  <AddToCalendarButton
+                    match={m}
+                    homeName={teamMap[m.homeTeamId]?.name ?? "TBD"}
+                    awayName={teamMap[m.awayTeamId]?.name ?? "TBD"}
+                    compact
+                    className="mt-1"
+                  />
                 </div>
               </div>
             );
@@ -169,7 +194,7 @@ export default function LivePage() {
       </section>
 
       <p className="text-center text-xs text-gray-400">
-        Last updated {formatInTimeZone(new Date(lastUpdate), TZ, "h:mm:ss a")} ET · auto-refresh every 30s
+        Last updated {formatKickoff(lastUpdate, "h:mm:ss a")} {timezoneLabel} · auto-refresh every 30s
       </p>
     </div>
   );

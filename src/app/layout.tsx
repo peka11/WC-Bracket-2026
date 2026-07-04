@@ -3,6 +3,7 @@ import { Inter, Oswald } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { TimezoneProvider } from "@/components/timezone/TimezoneProvider";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
 import { BracketProvider } from "@/lib/bracket/BracketProvider";
 import { PredictionsProvider } from "@/lib/predictions/PredictionsProvider";
@@ -32,15 +33,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${oswald.variable} font-sans antialiased`}>
         <ThemeProvider>
-          <AuthProvider>
-            <BracketProvider>
-              <PredictionsProvider>
-                <ServiceWorkerRegister />
-                <Navbar />
-                <main className="mx-auto max-w-7xl px-4 pb-20 pt-6">{children}</main>
-              </PredictionsProvider>
-            </BracketProvider>
-          </AuthProvider>
+          <TimezoneProvider>
+            <AuthProvider>
+              <BracketProvider>
+                <PredictionsProvider>
+                  <ServiceWorkerRegister />
+                  <Navbar />
+                  <main className="mx-auto max-w-7xl px-4 pb-20 pt-6">{children}</main>
+                </PredictionsProvider>
+              </BracketProvider>
+            </AuthProvider>
+          </TimezoneProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -3,15 +3,16 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import { X, MapPin, Clock } from "lucide-react";
-import { formatInTimeZone } from "date-fns-tz";
 import { useBracket } from "@/lib/bracket/BracketProvider";
 import { getMatchLabel } from "@/lib/data/tournament";
 import { MATCH_STATUS_LABELS } from "@/lib/types";
-
-const DISPLAY_TZ = "America/New_York";
+import { AddToCalendarButton } from "@/components/calendar/AddToCalendarButton";
+import { useTimezone } from "@/components/timezone/TimezoneProvider";
+import { getStadiumMeta } from "@/lib/data/stadiums";
 
 export function MatchDrawer() {
   const { selectedMatch, selectedTeamId, teamMap, closeDrawer } = useBracket();
+  const { formatKickoff, timezoneLabel } = useTimezone();
   const open = !!(selectedMatch || selectedTeamId);
   const team = selectedTeamId ? teamMap[selectedTeamId] : null;
   const match = selectedMatch;
@@ -50,7 +51,7 @@ export function MatchDrawer() {
               <div className="flex items-center justify-between gap-2 text-xs text-gray-500">
                 <span className="flex items-center gap-1">
                   <Clock className="h-3.5 w-3.5" />
-                  {formatInTimeZone(new Date(match.kickoffAt), DISPLAY_TZ, "EEE MMM d · h:mm a")} ET
+                  {formatKickoff(match.kickoffAt, "EEE MMM d · h:mm a")} {timezoneLabel}
                 </span>
                 <span className="rounded-full bg-gray-100 px-2 py-0.5 dark:bg-white/10">
                   {MATCH_STATUS_LABELS[match.status]}
@@ -61,8 +62,19 @@ export function MatchDrawer() {
                 <p className="flex items-center gap-1 text-xs text-gray-500">
                   <MapPin className="h-3.5 w-3.5" />
                   {match.venue}
+                  {getStadiumMeta(match.venue) && (
+                    <span className="text-gray-400">
+                      · {getStadiumMeta(match.venue)!.capacity.toLocaleString()} capacity
+                    </span>
+                  )}
                 </p>
               )}
+
+              <AddToCalendarButton
+                match={match}
+                homeName={teamMap[match.homeTeamId]?.name ?? "TBD"}
+                awayName={teamMap[match.awayTeamId]?.name ?? "TBD"}
+              />
 
               <div className="space-y-2">
                 {[match.homeTeamId, match.awayTeamId].map((id, i) => {
@@ -77,7 +89,12 @@ export function MatchDrawer() {
                       <div className="relative h-10 w-10 overflow-hidden rounded-full">
                         <Image src={t.flagUrl} alt="" fill className="object-cover" unoptimized />
                       </div>
-                      <span className="flex-1 font-medium">{t.name}</span>
+                      <div className="flex-1">
+                        <span className="font-medium">{t.name}</span>
+                        {t.fifaRanking != null && (
+                          <p className="text-[10px] text-gray-400">FIFA #{t.fifaRanking}</p>
+                        )}
+                      </div>
                       <span className="text-2xl font-bold tabular-nums">{score ?? "–"}</span>
                     </div>
                   );
