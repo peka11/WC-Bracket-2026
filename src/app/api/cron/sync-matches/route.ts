@@ -1,7 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function POST(req: NextRequest) {
-  const secret = req.headers.get("authorization")?.replace("Bearer ", "");
+async function runSync(req: NextRequest) {
+  const secret =
+    req.headers.get("authorization")?.replace("Bearer ", "") ??
+    req.headers.get("x-admin-key");
   if (secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -15,4 +17,13 @@ export async function POST(req: NextRequest) {
 
   const data = await res.json();
   return NextResponse.json(data, { status: res.status });
+}
+
+/** Vercel Cron invokes this route with GET */
+export async function GET(req: NextRequest) {
+  return runSync(req);
+}
+
+export async function POST(req: NextRequest) {
+  return runSync(req);
 }

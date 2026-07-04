@@ -41,7 +41,7 @@ Or connect the GitHub repo in Vercel for automatic deploys on push.
 
 ## 4. Cron (live sync)
 
-`vercel.json` configures a cron job to hit `/api/cron/sync-matches` every 5 minutes during the tournament. Set `CRON_SECRET` in Vercel env vars.
+`vercel.json` runs a daily cron at 12:00 UTC (Hobby plan limit: once per day). Set `CRON_SECRET` in Vercel env vars.
 
 Manual sync (admin):
 
