@@ -10,9 +10,10 @@ import { MatchCard } from "@/components/matches/MatchCard";
 interface BracketPanelProps {
   interactive?: boolean;
   onPickWinner?: (matchId: string, winnerId: string) => void;
+  canPickMatch?: (matchId: string) => boolean;
 }
 
-export function BracketPanel({ interactive = false, onPickWinner }: BracketPanelProps) {
+export function BracketPanel({ interactive = false, onPickWinner, canPickMatch }: BracketPanelProps) {
   const {
     teams,
     teamMap,
@@ -42,7 +43,7 @@ export function BracketPanel({ interactive = false, onPickWinner }: BracketPanel
           interactive={interactive}
           onSectorFocus={setFocusedSector}
           onTeamClick={(teamId, matchId) => {
-            if (interactive && matchId && onPickWinner) {
+            if (interactive && matchId && onPickWinner && canPickMatch?.(matchId) !== false) {
               onPickWinner(matchId, teamId);
             } else {
               openTeam(teamId, matchId);
@@ -55,7 +56,7 @@ export function BracketPanel({ interactive = false, onPickWinner }: BracketPanel
         matches={matches}
         teamMap={teamMap}
         onTeamClick={(teamId, matchId) => {
-          if (interactive && matchId && onPickWinner) {
+          if (interactive && matchId && onPickWinner && canPickMatch?.(matchId) !== false) {
             onPickWinner(matchId, teamId);
           } else {
             openTeam(teamId, matchId);

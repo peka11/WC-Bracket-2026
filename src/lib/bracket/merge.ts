@@ -1,5 +1,36 @@
-import type { Match, BracketSlot } from "@/lib/types";
+import type { Match, BracketSlot, MatchStatus } from "@/lib/types";
 import { advanceWinner } from "@/lib/bracket/advance";
+
+const LIVE_STATUSES: MatchStatus[] = ["live", "halftime", "extra_time", "penalties"];
+
+function isLiveStatus(status: MatchStatus): boolean {
+  return LIVE_STATUSES.includes(status);
+}
+
+/** Prefer static tournament data for finished results; snapshot wins for live/in-progress */
+function mergeMatch(base: Match, snapshot: Match): Match {
+  if (isLiveStatus(snapshot.status)) {
+    return { ...base, ...snapshot };
+  }
+
+  if (snapshot.status === "finished" && base.status !== "finished") {
+    return { ...base, ...snapshot };
+  }
+
+  if (base.status === "finished" && base.winnerTeamId) {
+    return {
+      ...base,
+      ...snapshot,
+      status: base.status,
+      homeScore: base.homeScore ?? snapshot.homeScore,
+      awayScore: base.awayScore ?? snapshot.awayScore,
+      winnerTeamId: base.winnerTeamId ?? snapshot.winnerTeamId,
+      events: base.events?.length ? base.events : snapshot.events,
+    };
+  }
+
+  return { ...base, ...snapshot };
+}
 
 /** Apply live snapshot over static tournament data; re-run advancement for finished matches */
 export function mergeBracketState(
@@ -16,7 +47,7 @@ export function mergeBracketState(
   for (const sm of snapshotMatches) {
     const existing = byId.get(sm.id);
     if (existing) {
-      byId.set(sm.id, { ...existing, ...sm });
+      byId.set(sm.id, mergeMatch(existing, sm));
     } else {
       byId.set(sm.id, sm);
     }

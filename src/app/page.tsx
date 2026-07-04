@@ -4,12 +4,16 @@ import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Radio } from "lucide-react";
+import { useMemo } from "react";
 import { BracketPanel } from "@/components/bracket/BracketPanel";
+import { StillAliveBanner } from "@/components/bracket/StillAliveBanner";
 import { SyncIndicator } from "@/components/bracket/ShareBracket";
 import { MatchCard } from "@/components/matches/MatchCard";
 import { useBracket } from "@/lib/bracket/BracketProvider";
+import { usePredictions } from "@/lib/predictions/PredictionsProvider";
 import { DATA_AS_OF } from "@/lib/data/tournament";
 import { getTournamentStatus } from "@/lib/tournament-status";
+import { getMatchPickOverlay } from "@/lib/predictions/match-pick-status";
 
 function TournamentStatus() {
   const { matches, activeTeams } = useBracket();
@@ -27,7 +31,17 @@ function TournamentStatus() {
 
 export default function HomePage() {
   const { teamMap, matches, isSyncing, refresh, activeTeams } = useBracket();
+  const { picks } = usePredictions();
   const status = getTournamentStatus(matches, activeTeams.length);
+
+  const pickOverlays = useMemo(() => {
+    const map = new Map<string, ReturnType<typeof getMatchPickOverlay>>();
+    for (const m of [...matches]) {
+      map.set(m.id, getMatchPickOverlay(m, picks, teamMap));
+    }
+    return map;
+  }, [matches, picks, teamMap]);
+
   const liveMatches = matches.filter((m) => m.status === "live");
   const upcoming = matches
     .filter((m) => m.status === "not_started")
@@ -66,6 +80,8 @@ export default function HomePage() {
         </motion.div>
       </section>
 
+      <StillAliveBanner />
+
       {liveMatches.length > 0 && (
         <section>
           <div className="mb-4 flex items-center gap-2">
@@ -74,7 +90,13 @@ export default function HomePage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {liveMatches.map((m) => (
-              <MatchCard key={m.id} match={m} home={teamMap[m.homeTeamId]} away={teamMap[m.awayTeamId]} />
+              <MatchCard
+                key={m.id}
+                match={m}
+                home={teamMap[m.homeTeamId]}
+                away={teamMap[m.awayTeamId]}
+                pickOverlay={pickOverlays.get(m.id)}
+              />
             ))}
           </div>
         </section>
@@ -105,7 +127,13 @@ export default function HomePage() {
           <h2 className="font-display mb-4 text-lg font-semibold">Latest results</h2>
           <div className="grid gap-4 sm:grid-cols-1">
             {recentResults.map((m) => (
-              <MatchCard key={m.id} match={m} home={teamMap[m.homeTeamId]} away={teamMap[m.awayTeamId]} />
+              <MatchCard
+                key={m.id}
+                match={m}
+                home={teamMap[m.homeTeamId]}
+                away={teamMap[m.awayTeamId]}
+                pickOverlay={pickOverlays.get(m.id)}
+              />
             ))}
           </div>
         </section>
