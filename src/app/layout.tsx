@@ -7,6 +7,7 @@ import { AuthProvider } from "@/lib/auth/AuthProvider";
 import { BracketProvider } from "@/lib/bracket/BracketProvider";
 import { PredictionsProvider } from "@/lib/predictions/PredictionsProvider";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const oswald = Oswald({ subsets: ["latin"], variable: "--font-display", weight: ["500", "600", "700"] });
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </BracketProvider>
           </AuthProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
