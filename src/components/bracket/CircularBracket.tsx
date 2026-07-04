@@ -109,7 +109,7 @@ function TeamNode({
 
   return (
     <motion.g
-      initial={{ opacity: 0, scale: 0.6 }}
+      initial={{ opacity: isEliminated ? 0.4 : 1, scale: 0.95 }}
       animate={{ opacity: isEliminated ? 0.4 : 1, scale: 1 }}
       transition={{ type: "spring", stiffness: 260, damping: 22 }}
       whileHover={interactive && !isEliminated ? { scale: 1.1 } : undefined}
@@ -201,9 +201,8 @@ function WorldCupCenter({ championId, teamMap }: { championId?: string | null; t
 
   return (
     <motion.g
-      initial={{ scale: 0.7, opacity: 0 }}
+      initial={{ scale: 1, opacity: 1 }}
       animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 0.2, type: "spring", stiffness: 180 }}
     >
       {[72, 58, 44].map((r, i) => (
         <circle
@@ -301,7 +300,7 @@ export function CircularBracket({
   };
 
   return (
-    <div className="relative mx-auto w-full max-w-[860px] overflow-visible px-2 py-4">
+    <div className="relative mx-auto w-full max-w-[860px] touch-pan-y overflow-visible px-1 py-2 sm:px-2 sm:py-4">
       <div className="pointer-events-none absolute inset-4 rounded-full bg-[radial-gradient(circle,rgba(197,160,40,0.12)_0%,transparent_65%)] blur-2xl" />
       <svg
         viewBox="-48 -48 896 896"

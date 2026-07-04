@@ -31,7 +31,7 @@ export function BracketPanel({ interactive = false, onPickWinner }: BracketPanel
 
   return (
     <>
-      <div className="hidden md:block" style={{ maxWidth: 860, margin: "0 auto" }}>
+      <div className="mx-auto w-full max-w-[860px]">
         <CircularBracket
           teams={teams}
           teamMap={teamMap}
@@ -64,7 +64,7 @@ export function BracketPanel({ interactive = false, onPickWinner }: BracketPanel
       />
 
       {focusedMatch && focusedSector != null && (
-        <div className="mt-6 hidden rounded-2xl border border-wc-gold/30 bg-wc-gold/5 p-4 md:block">
+        <div className="mt-6 rounded-2xl border border-wc-gold/30 bg-wc-gold/5 p-4">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-sm font-semibold text-wc-gold">
               Round of 16 · Match {focusedMatch.matchNumber}

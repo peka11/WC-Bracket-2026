@@ -16,7 +16,10 @@ export function BracketListView({ matches, teamMap, onTeamClick }: BracketListVi
   const upcomingR32 = matches.filter((m) => m.round === "r32" && m.status === "not_started");
 
   return (
-    <div className="space-y-6 md:hidden">
+    <div className="mt-8 space-y-6 border-t border-black/10 pt-6 md:hidden dark:border-white/10">
+      <p className="text-center text-xs font-semibold uppercase tracking-wider text-gray-500">
+        Match list
+      </p>
       {upcomingR32.length > 0 && (
         <section>
           <h3 className="font-display mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
