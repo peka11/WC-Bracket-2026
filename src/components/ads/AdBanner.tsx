@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 import { cn } from "@/lib/utils";
 
 const AD_SCRIPT_URL =
@@ -9,30 +9,61 @@ const AD_SCRIPT_URL =
 
 export const AD_ZONE_ID = process.env.NEXT_PUBLIC_AD_ZONE_ID ?? "30117834";
 
+/** Adsterra / EffectiveCPM banner invoke host from your publisher dashboard. */
+const AD_INVOKE_HOST =
+  process.env.NEXT_PUBLIC_AD_INVOKE_HOST ?? "www.highperformanceformat.com";
+
 type PlacementFormat = "leaderboard" | "mobile" | "rectangle";
 
 const FORMATS: Record<
   PlacementFormat,
-  { minWidth: number; minHeight: number; className: string }
+  { width: number; height: number; className: string }
 > = {
   leaderboard: {
-    minWidth: 728,
-    minHeight: 90,
+    width: 728,
+    height: 90,
     className: "hidden w-full max-w-[728px] sm:block",
   },
   mobile: {
-    minWidth: 320,
-    minHeight: 50,
+    width: 320,
+    height: 50,
     className: "block w-full max-w-[320px] sm:hidden",
   },
   rectangle: {
-    minWidth: 300,
-    minHeight: 250,
+    width: 300,
+    height: 250,
     className: "block w-full max-w-[336px]",
   },
 };
 
-/** Loads EffectiveCPM once after hydration. */
+declare global {
+  interface Window {
+    atOptions?: Record<string, unknown>;
+  }
+}
+
+function loadBannerIntoContainer(containerId: string, width: number, height: number) {
+  const container = document.getElementById(containerId);
+  if (!container || container.dataset.adLoaded === "1") return;
+  container.dataset.adLoaded = "1";
+
+  window.atOptions = {
+    key: AD_ZONE_ID,
+    format: "iframe",
+    height,
+    width,
+    container: containerId,
+    params: {},
+  };
+
+  const invoke = document.createElement("script");
+  invoke.type = "text/javascript";
+  invoke.src = `https://${AD_INVOKE_HOST}/${AD_ZONE_ID}/invoke.js`;
+  invoke.async = true;
+  container.appendChild(invoke);
+}
+
+/** Global EffectiveCPM loader (popunders / network-managed units). */
 export function AdScript() {
   useEffect(() => {
     if (!AD_SCRIPT_URL) return;
@@ -49,12 +80,12 @@ export function AdScript() {
 }
 
 /**
- * Visible ad slot — reserved space for EffectiveCPM / zone banners.
- * Set NEXT_PUBLIC_AD_ZONE_ID in Vercel (default 30117834).
+ * Visible banner slot — loads zone invoke.js into this container.
+ * Copy NEXT_PUBLIC_AD_INVOKE_HOST from your Adsterra / EffectiveCPM banner snippet if ads stay empty.
  */
 export function AdPlacement({
   format = "leaderboard",
-  slot = "default",
+  slot,
   className,
   label = "Advertisement",
 }: {
@@ -63,8 +94,14 @@ export function AdPlacement({
   className?: string;
   label?: string;
 }) {
+  const autoId = useId().replace(/:/g, "");
+  const slotKey = slot ?? format;
+  const containerId = `ad-zone-${AD_ZONE_ID}-${slotKey}-${autoId}`;
   const dims = FORMATS[format];
-  const containerId = `ad-zone-${AD_ZONE_ID}-${slot}`;
+
+  useEffect(() => {
+    loadBannerIntoContainer(containerId, dims.width, dims.height);
+  }, [containerId, dims.width, dims.height]);
 
   return (
     <aside
@@ -78,24 +115,55 @@ export function AdPlacement({
       <div
         id={containerId}
         data-ad-zone={AD_ZONE_ID}
-        data-zone-id={AD_ZONE_ID}
-        data-ad-slot={slot}
+        data-ad-format={format}
         className={cn(
           "flex items-center justify-center overflow-hidden rounded-lg border border-black/5 bg-black/[0.02] dark:border-white/10 dark:bg-white/[0.02]",
           dims.className
         )}
-        style={{ minWidth: dims.minWidth, minHeight: dims.minHeight }}
+        style={{ minWidth: dims.width, minHeight: dims.height }}
       />
     </aside>
   );
 }
 
-/** 320×50 on mobile, 728×90 on desktop — standard header strip. */
+/** One banner per page: 320×50 mobile or 728×90 desktop (same zone, no duplicate invoke). */
 export function ResponsiveAdStrip({ className }: { className?: string }) {
+  const autoId = useId().replace(/:/g, "");
+  const mobileId = `ad-zone-${AD_ZONE_ID}-mobile-${autoId}`;
+  const desktopId = `ad-zone-${AD_ZONE_ID}-leaderboard-${autoId}`;
+
+  useEffect(() => {
+    const pick = () => {
+      if (window.matchMedia("(min-width: 640px)").matches) {
+        loadBannerIntoContainer(desktopId, 728, 90);
+      } else {
+        loadBannerIntoContainer(mobileId, 320, 50);
+      }
+    };
+    pick();
+    window.matchMedia("(min-width: 640px)").addEventListener("change", pick);
+    return () =>
+      window.matchMedia("(min-width: 640px)").removeEventListener("change", pick);
+  }, [mobileId, desktopId]);
+
   return (
     <div className={cn("flex flex-col items-center gap-2", className)}>
-      <AdPlacement format="mobile" slot="mobile" />
-      <AdPlacement format="leaderboard" slot="leaderboard" />
+      <aside className="ad-placement mx-auto flex w-full flex-col items-center gap-1 sm:hidden">
+        <p className="text-[10px] uppercase tracking-wider text-gray-400">Advertisement</p>
+        <div
+          id={mobileId}
+          className="flex w-full max-w-[320px] items-center justify-center overflow-hidden rounded-lg border border-black/5 bg-black/[0.02] dark:border-white/10 dark:bg-white/[0.02]"
+          style={{ minWidth: 320, minHeight: 50 }}
+        />
+      </aside>
+      <aside className="ad-placement mx-auto hidden w-full flex-col items-center gap-1 sm:flex">
+        <p className="text-[10px] uppercase tracking-wider text-gray-400">Advertisement</p>
+        <div
+          id={desktopId}
+          className="flex w-full max-w-[728px] items-center justify-center overflow-hidden rounded-lg border border-black/5 bg-black/[0.02] dark:border-white/10 dark:bg-white/[0.02]"
+          style={{ minWidth: 728, minHeight: 90 }}
+        />
+      </aside>
     </div>
   );
 }
