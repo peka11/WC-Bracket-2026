@@ -17,11 +17,16 @@ import { isSameDay } from "date-fns";
 type ViewMode = "today" | "tomorrow" | "round" | "all";
 
 function Countdown({ kickoffAt }: { kickoffAt: string }) {
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState<number | null>(null);
+
   useEffect(() => {
+    setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
+
+  if (now == null) return <span className="text-wc-gold">—</span>;
+
   const diff = new Date(kickoffAt).getTime() - now;
   if (diff <= 0) return <span className="text-red-400">Soon</span>;
   const h = Math.floor(diff / 3600000);

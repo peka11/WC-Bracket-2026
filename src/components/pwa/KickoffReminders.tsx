@@ -8,10 +8,12 @@ const NOTIFIED_KEY = "wc-kickoff-notified";
 
 export function KickoffReminders() {
   const { matches } = useBracket();
+  const [mounted, setMounted] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission>("default");
 
   useEffect(() => {
+    setMounted(true);
     if (typeof Notification !== "undefined") {
       setPermission(Notification.permission);
       setEnabled(Notification.permission === "granted");
@@ -49,7 +51,7 @@ export function KickoffReminders() {
     localStorage.setItem(NOTIFIED_KEY, JSON.stringify(notified.slice(-50)));
   }, [matches, enabled, permission]);
 
-  if (typeof Notification === "undefined") return null;
+  if (!mounted || typeof Notification === "undefined") return null;
 
   return (
     <button

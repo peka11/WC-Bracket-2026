@@ -1,14 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useBracket } from "@/lib/bracket/BracketProvider";
 import { useTranslation } from "@/lib/i18n/I18nProvider";
 import { MATCH_STATUS_LABELS } from "@/lib/types";
+import { formatInTimeZone } from "date-fns-tz";
+import { DEFAULT_TIMEZONE } from "@/components/timezone/TimezoneProvider";
 
 export function MatchTicker() {
   const { matches, teamMap } = useBracket();
   const t = useTranslation();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const items = useMemo(() => {
     return matches
@@ -24,6 +29,8 @@ export function MatchTicker() {
 
   if (!items.length) return null;
 
+  if (!mounted) return null;
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-wc-green/30 bg-[#071a10]/95 text-white backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-hidden px-4 py-2">
@@ -35,7 +42,9 @@ export function MatchTicker() {
             const home = teamMap[m.homeTeamId]?.code ?? "?";
             const away = teamMap[m.awayTeamId]?.code ?? "?";
             const score =
-              m.homeScore != null ? `${m.homeScore}–${m.awayScore}` : new Date(m.kickoffAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+              m.homeScore != null
+                ? `${m.homeScore}–${m.awayScore}`
+                : formatInTimeZone(new Date(m.kickoffAt), DEFAULT_TIMEZONE, "h:mm a");
             return (
               <Link key={`${m.id}-${i}`} href={`/matches/${m.id}`} className="inline-flex items-center gap-2 hover:text-wc-gold">
                 <span className={m.status !== "not_started" ? "text-red-400" : "text-gray-400"}>

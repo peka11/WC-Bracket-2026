@@ -193,9 +193,11 @@ export default function LivePage() {
         </div>
       </section>
 
-      <p className="text-center text-xs text-gray-400">
-        Last updated {formatKickoff(lastUpdate, "h:mm:ss a")} {timezoneLabel} · auto-refresh every 30s
-      </p>
+      {lastUpdate && (
+        <p className="text-center text-xs text-gray-400">
+          Last updated {formatKickoff(lastUpdate, "h:mm:ss a")} {timezoneLabel} · auto-refresh every 30s
+        </p>
+      )}
     </div>
   );
 }

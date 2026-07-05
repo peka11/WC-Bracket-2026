@@ -24,10 +24,11 @@ export default function PredictionsPage() {
   const { teamMap, matches, activeTeams } = useBracket();
   const { picks, setMatchPick, setBracketPick, setConfidence, setChampion, save, saved, cloudSynced } = usePredictions();
   const { consensus } = useConsensus();
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState<number | null>(null);
   const [flashPick, setFlashPick] = useState<{ matchId: string; teamId: string } | null>(null);
 
   useEffect(() => {
+    setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 30_000);
     return () => clearInterval(id);
   }, []);
@@ -39,12 +40,16 @@ export default function PredictionsPage() {
   }, [flashPick]);
 
   const openMatches = useMemo(
-    () => matches.filter((m) => m.status === "not_started" && !isMatchLocked(m, now)),
+    () =>
+      now == null
+        ? []
+        : matches.filter((m) => m.status === "not_started" && !isMatchLocked(m, now)),
     [matches, now]
   );
 
   const canPickMatch = useCallback(
     (matchId: string) => {
+      if (now == null) return false;
       const m = matches.find((x) => x.id === matchId);
       return m ? !isMatchLocked(m, now) : false;
     },
@@ -136,7 +141,7 @@ export default function PredictionsPage() {
           const away = teamMap[m.awayTeamId];
           const pick = picks.matchPicks[m.id] ?? {};
           const picked = picks.bracketPicks[m.id] ?? pick.winner;
-          const locked = isMatchLocked(m, now);
+          const locked = now != null && isMatchLocked(m, now);
           const odds = getMatchWinProbabilities(home, away);
           const community = consensus
             ? getMatchConsensusPct(consensus, m.id, home.id, away.id)

@@ -27,7 +27,7 @@ interface BracketState {
   matches: Match[];
   slots: BracketSlot[];
   championId: string | null;
-  lastUpdate: string;
+  lastUpdate: string | null;
   focusedSector: number | null;
   selectedMatch: Match | null;
   selectedTeamId: string | null;
@@ -68,7 +68,7 @@ export function BracketProvider({ children }: { children: ReactNode }) {
   const [matches, setMatches] = useState<Match[]>(buildInitialMatches);
   const [slots, setSlots] = useState<BracketSlot[]>(() => ensureInnerSlots(buildInitialSlots()));
   const [championId, setChampionId] = useState<string | null>(null);
-  const [lastUpdate, setLastUpdate] = useState(new Date().toISOString());
+  const [lastUpdate, setLastUpdate] = useState<string | null>(null);
   const [focusedSector, setFocusedSector] = useState<number | null>(null);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
