@@ -16,7 +16,6 @@ import { DATA_AS_OF } from "@/lib/data/tournament";
 import { getTournamentStatus } from "@/lib/tournament-status";
 import { getMatchPickOverlay } from "@/lib/predictions/match-pick-status";
 import { AddAllToCalendarButton } from "@/components/calendar/AddToCalendarButton";
-import { AdPlacement } from "@/components/ads/AdBanner";
 
 function TournamentStatus() {
   const { matches, activeTeams } = useBracket();
@@ -84,8 +83,6 @@ export default function HomePage() {
       </section>
 
       <StillAliveBanner />
-
-      <AdPlacement format="rectangle" slot="home-mid" className="py-2" />
 
       {liveMatches.length > 0 && (
         <section>

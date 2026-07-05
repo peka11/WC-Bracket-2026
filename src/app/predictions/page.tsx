@@ -19,7 +19,6 @@ import { getMatchConsensusPct } from "@/lib/predictions/consensus-utils";
 import { getMatchWinProbabilities } from "@/lib/predictions/bracket-analysis";
 import { WinProbabilityBar, CommunityPickBar } from "@/components/predictions/OddsDisplay";
 import Link from "next/link";
-import { AdPlacement } from "@/components/ads/AdBanner";
 
 export default function PredictionsPage() {
   const { teamMap, matches, activeTeams } = useBracket();
@@ -79,8 +78,6 @@ export default function PredictionsPage() {
       </div>
 
       <StillAliveBanner />
-
-      <AdPlacement format="rectangle" slot="predictions-mid" className="py-2" />
 
       <div className="glass-card overflow-visible p-4 sm:p-6">
         <h2 className="font-display mb-2 text-lg font-semibold">Interactive bracket</h2>
