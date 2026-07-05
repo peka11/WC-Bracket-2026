@@ -1,4 +1,4 @@
-const CACHE = "wc-bracket-v2";
+const CACHE = "wc-bracket-v3";
 const PRECACHE = ["/", "/live", "/predictions", "/manifest.json", "/icon.svg"];
 
 self.addEventListener("install", (event) => {
