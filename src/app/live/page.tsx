@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { TBD_TEAM } from "@/lib/data/tournament";
 import { useTimezone } from "@/components/timezone/TimezoneProvider";
 import { getMatchPickOverlay } from "@/lib/predictions/match-pick-status";
+import { AdPlacement } from "@/components/ads/AdBanner";
 
 export default function LivePage() {
   const { matches, teamMap, refresh, isSyncing, lastUpdate } = useBracket();
@@ -83,6 +84,8 @@ export default function LivePage() {
       </div>
 
       <StillAliveBanner />
+
+      <AdPlacement format="rectangle" slot="live-mid" className="py-2" />
 
       {pickedUpcoming > 0 && (
         <div className="flex items-center gap-2 rounded-xl bg-wc-green/10 px-4 py-2 text-sm text-wc-green">
