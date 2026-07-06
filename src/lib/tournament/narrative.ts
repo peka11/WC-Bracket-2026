@@ -104,9 +104,26 @@ export const TOURNAMENT_TIMELINE: TournamentDay[] = [
     date: "2026-07-04",
     title: "Round of 16 weekend",
     highlights: [
-      "8 R16 ties over Independence Day weekend",
-      "Paraguay shock Germany on penalties",
-      "Morocco eliminate Netherlands in Monterrey",
+      "Morocco edge Canada 1-0 in Houston",
+      "Mbappé brace as France beat Paraguay 3-1",
+    ],
+  },
+  {
+    day: 25,
+    date: "2026-07-05",
+    title: "R16 Sunday",
+    highlights: [
+      "Brazil rally past Norway 2-1 at MetLife",
+      "Kane & Bellingham send England past Mexico at the Azteca",
+    ],
+  },
+  {
+    day: 26,
+    date: "2026-07-06",
+    title: "Quarterfinals set",
+    highlights: [
+      "Morocco vs France and Brazil vs England confirmed for QF weekend",
+      "Iberian derby: Portugal vs Spain in Arlington tonight",
     ],
   },
 ];

@@ -6,7 +6,7 @@ import {
   TOURNAMENT_ID,
   TEAMS_2026,
 } from "@/lib/data/tournament";
-import { ensureInnerSlots } from "@/lib/bracket/advance";
+import { ensureInnerSlots, resolveBracketState } from "@/lib/bracket/advance";
 import { mergeBracketState } from "@/lib/bracket/merge";
 import { getMemorySnapshot } from "@/lib/bracket/snapshot-store";
 import { enrichAllMatches } from "@/lib/match/enrich";
@@ -36,8 +36,10 @@ async function loadSnapshot() {
 }
 
 export async function GET() {
-  const baseMatches = buildInitialMatches();
-  const baseSlots = ensureInnerSlots(buildInitialSlots());
+  const { matches: baseMatches, slots: baseSlots } = resolveBracketState(
+    buildInitialMatches(),
+    ensureInnerSlots(buildInitialSlots())
+  );
   const snapshot = await loadSnapshot();
 
   const { matches, slots } = mergeBracketState(

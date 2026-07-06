@@ -6,7 +6,7 @@ import {
   TEAMS_2026,
   TOURNAMENT_ID,
 } from "@/lib/data/tournament";
-import { ensureInnerSlots } from "@/lib/bracket/advance";
+import { ensureInnerSlots, resolveBracketState } from "@/lib/bracket/advance";
 import { mergeBracketState } from "@/lib/bracket/merge";
 import { getMemorySnapshot } from "@/lib/bracket/snapshot-store";
 import { enrichAllMatches } from "@/lib/match/enrich";

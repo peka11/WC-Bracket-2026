@@ -17,7 +17,7 @@ import {
   buildInitialSlots,
   getTeamMap,
 } from "@/lib/data/tournament";
-import { advanceWinner, ensureInnerSlots, getActiveTeamIds } from "@/lib/bracket/advance";
+import { advanceWinner, ensureInnerSlots, getActiveTeamIds, resolveBracketState } from "@/lib/bracket/advance";
 import { TOURNAMENT_ID } from "@/lib/data/tournament";
 
 interface BracketState {
@@ -62,11 +62,16 @@ function applyPayload(
   setLastUpdate(data.syncedAt ?? new Date().toISOString());
 }
 
+const initialBracket = resolveBracketState(
+  buildInitialMatches(),
+  ensureInnerSlots(buildInitialSlots())
+);
+
 export function BracketProvider({ children }: { children: ReactNode }) {
   const [teams] = useState(TEAMS_2026);
   const [teamMap] = useState(getTeamMap(TEAMS_2026));
-  const [matches, setMatches] = useState<Match[]>(buildInitialMatches);
-  const [slots, setSlots] = useState<BracketSlot[]>(() => ensureInnerSlots(buildInitialSlots()));
+  const [matches, setMatches] = useState<Match[]>(initialBracket.matches);
+  const [slots, setSlots] = useState<BracketSlot[]>(initialBracket.slots);
   const [championId, setChampionId] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<string | null>(null);
   const [focusedSector, setFocusedSector] = useState<number | null>(null);

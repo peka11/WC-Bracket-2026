@@ -77,3 +77,17 @@ export function getActiveTeamIds(slots: BracketSlot[]): Set<string> {
   }
   return active;
 }
+
+/** Run advancement for every finished match so the bracket reflects current scores. */
+export function resolveBracketState(
+  matches: Match[],
+  slots: BracketSlot[]
+): { matches: Match[]; slots: BracketSlot[] } {
+  let resolvedSlots = [...slots];
+  for (const match of matches) {
+    if (match.status === "finished" && match.winnerTeamId) {
+      resolvedSlots = advanceWinner(resolvedSlots, match);
+    }
+  }
+  return { matches, slots: resolvedSlots };
+}
